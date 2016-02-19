@@ -18,6 +18,7 @@ var (
 	Version    = "dev"
 	NetworkKey string
 	LogLevel   string
+	DeviceType string
 
 	keyNotSetError = errors.New("please, set environment variable \"MESHBIRD_KEY\"")
 )
@@ -82,6 +83,13 @@ func main() {
 			Destination: &LogLevel,
 			EnvVar:      "MESHBIRD_LOG_LEVEL",
 		},
+		cli.StringFlag{
+			Name:        "device_type",
+			Value:       "tun",
+			Usage:       "set device type tun or tap",
+			Destination: &DeviceType,
+			EnvVar:      "DEVICE_TYPE",
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -136,6 +144,7 @@ func actionJoin(ctx *cli.Context) {
 	config := &common.Config{
 		SecretKey:      NetworkKey,
 		BootstrapNodes: ctx.String("bootstrap"),
+		DeviceType: DeviceType,
 	}
 
 	node, err := common.NewLocalNode(config)
