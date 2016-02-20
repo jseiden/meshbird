@@ -53,17 +53,6 @@ func CreateTunInterfaceWithIp(iface string, IpAddr string) (*Interface, error) {
 	return ifce, err
 }
 
-func NextNetworkPacket(iface *Interface) ([]byte, error) {
-	if MTU == 0 {
-		MTU = DEFAULT_MTU
-	}
-
-	raw_data := make([]byte, MTU)
-
-	_, err := iface.Read(raw_data)
-	return raw_data, err
-}
-
 func IPv4Destination(packet []byte) net.IP {
 	return net.IPv4(packet[16], packet[17], packet[18], packet[19])
 }
