@@ -169,10 +169,8 @@ func (nt *NetTable) addToBlackList(h string) {
 	//nt.blackList[h] = time.Now()
 }
 
-func (nt *NetTable) SendPacket(dstIP net.IP, payload []byte) {
-	srcAddress := net.IP(payload[12:16])
-	dstAddress := net.IP(payload[16:20])
-	nt.logger.Info("sending packet from %s to %s, len %d bytes", srcAddress.String(), dstAddress.String(), len(payload))
+func (nt *NetTable) SendPacket(srcIP net.IP, dstIP net.IP, payload []byte) {
+	nt.logger.Info("sending packet from %s to %s, len %d bytes", srcIP.String(), dstIP.String(), len(payload))
 
 	rn := nt.RemoteNodeByIP(dstIP)
 	if rn == nil {

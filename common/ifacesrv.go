@@ -5,6 +5,7 @@ import (
 	"github.com/meshbird/meshbird/log"
 	"github.com/meshbird/meshbird/network"
 	"strconv"
+	"net"
 )
 
 type InterfaceService struct {
@@ -40,14 +41,29 @@ func (is *InterfaceService) Run() error {
 	for {
 		buf := make([]byte, 1500)
 		n, err := is.instance.Read(buf)
+		var dst net.IP
+		var src net.IP
 		if err != nil {
 			is.logger.Error("error on read from interface, %v", err)
 			return err
 		}
 		packet := buf[:n]
+		if is.instance.IsTAP() {
+			ethertype := network.L2Ethertype(buf)
+			if ethertype == network.IPv4 {
+				packet := network.L2Payload(buf)
+				if network.IsIPv4(packet) {
+					dst = network.IPv4Destination(packet)
+					src = network.IPv4Source(packet)
+				}
+			}
+		} else {
+			dst = network.IPv4Destination(packet)
+			src = network.IPv4Source(packet)
 
-		dst := network.IPv4Destination(packet)
-		is.netTable.SendPacket(dst, packet)
+		}
+
+		is.netTable.SendPacket(src, dst, packet)
 		is.logger.Debug("successfully been read %d bytes", n)
 	}
 	return nil
