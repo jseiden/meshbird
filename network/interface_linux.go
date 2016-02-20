@@ -25,7 +25,7 @@ type ifReq struct {
 }
 
 func newTAP() (ifce *Interface, err error) {
-	file, err := os.OpenFile("/dev/net/tap", os.O_RDWR, 0)
+	file, err := os.OpenFile("/dev/net/tun", os.O_RDWR, 0)
 	if err != nil {
 		return nil, err
 	}
