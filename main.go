@@ -144,7 +144,7 @@ func actionJoin(ctx *cli.Context) {
 	config := &common.Config{
 		SecretKey:      NetworkKey,
 		BootstrapNodes: ctx.String("bootstrap"),
-		DeviceType: DeviceType,
+		DeviceType:     DeviceType,
 	}
 
 	node, err := common.NewLocalNode(config)

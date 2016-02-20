@@ -24,8 +24,8 @@ type ifReq struct {
 	pad   [0x28 - 0x10 - 2]byte
 }
 
-func newTAP(ifName string) (ifce *Interface, err error) {
-	file, err := os.OpenFile("/dev/net/tun", os.O_RDWR, 0)
+func newTAP() (ifce *Interface, err error) {
+	file, err := os.OpenFile("/dev/net/tap", os.O_RDWR, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func newTAP(ifName string) (ifce *Interface, err error) {
 	return
 }
 
-func newTUN(ifName string) (ifce *Interface, err error) {
+func newTUN() (ifce *Interface, err error) {
 	file, err := os.OpenFile("/dev/net/tun", os.O_RDWR, 0)
 	if err != nil {
 		return nil, err
@@ -61,38 +61,6 @@ func createInterface(fd uintptr, ifName string, flags uint16) (createdIFName str
 	}
 	createdIFName = strings.Trim(string(req.Name[:]), "\x00")
 	return
-}
-
-func setPersistent(fd uintptr, persistent bool) error {
-	var val uintptr = 0
-	if persistent {
-		val = 1
-	}
-	_, _, errno := syscall.Syscall(syscall.SYS_IOCTL, fd, uintptr(syscall.TUNSETPERSIST), val)
-	if errno != 0 {
-		return errno
-	}
-	return nil
-}
-
-func interfaceOpen(ifType, ifName string) (*Interface, error) {
-	var err error
-	if ifType != "tun" && ifType != "tap" {
-		return nil, fmt.Errorf("unknown interface type: %s", ifType)
-	}
-	ifce := new(Interface)
-	for i := 0; i < 256; i++ {
-		ifPath := fmt.Sprintf("/dev/%s/tun%d", ifType, i)
-		ifce.file, err = os.OpenFile(ifPath, os.O_RDWR, 0644)
-		if err != nil {
-			continue
-		}
-		ifce.name = ifName
-	}
-	if ifce.file == nil {
-		return nil, fmt.Errorf("can't create network interface")
-	}
-	return ifce, err
 }
 
 func AssignIpAddress(iface string, IpAddr string) error {

@@ -6,13 +6,8 @@ import (
 	"os"
 )
 
-const DEFAULT_MTU = 1500
+const DEFAULT_MTU = 1400
 
-var MTU int
-
-func init() {
-	MTU = 0
-}
 
 type Interface struct {
 	isTAP bool
@@ -32,25 +27,35 @@ func (i *Interface) Read(data []byte) (n int, err error) {
 	return i.file.Read(data)
 }
 
-func CreateTunInterface(ifceName string) (*Interface, error) {
-	ifce, err := newTUN(ifceName)
-	if err != nil {
-		return nil, fmt.Errorf("create new tun interface %v err: %s", ifce, err)
+func CreateInterface(deviceType string, IPAddr string) (*Interface, error) {
+	fmt.Println(deviceType)
+	if deviceType != "tun" && deviceType != "tap" {
+		return nil, fmt.Errorf("Unknown interface type: %s\n", deviceType)
 	}
-	err = UpInterface(ifce.Name())
-	if err != nil {
-		return nil, fmt.Errorf("tun interface %s up err: %s", ifce.Name(), err)
-	}
-	return ifce, nil
-}
+	iface := new(Interface)
+	var err error
 
-func CreateTunInterfaceWithIp(iface string, IpAddr string) (*Interface, error) {
-	ifce, err := CreateTunInterface(iface)
-	if err != nil {
-		return nil, err
+	if deviceType == "tun" {
+		iface, err = newTUN()
+		if err != nil {
+			return nil, fmt.Errorf("Create new TUN interface %v err: %s", iface, err)
+		}
 	}
-	err = AssignIpAddress(ifce.Name(), IpAddr)
-	return ifce, err
+
+	if deviceType == "tap" {
+		iface, err = newTAP()
+		if err != nil {
+			return nil, fmt.Errorf("Create new TAP interface %v err: %s", iface, err)
+		}
+	}
+
+	err = UpInterface(iface.Name())
+
+	if err != nil {
+		return nil, fmt.Errorf("%s interface error: %s \n", deviceType, err)
+	}
+	err = AssignIpAddress(iface.Name(), IPAddr)
+	return iface, err
 }
 
 func IPv4Destination(packet []byte) net.IP {
