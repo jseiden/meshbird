@@ -15,6 +15,7 @@ For example, user can create private network between DigitalOcean's droplets in 
 
 - Linux (386, amd64, arm)
 - Darwin (386, amd64)
+- FreeBSD (386, amd64)
 
 ## Demo of ssh connection via our secure tunnel
 
@@ -36,13 +37,12 @@ Full video can be found at https://www.youtube.com/watch?v=sW5ZIcfX7w8
 ## Roadmap
 
 1. Better encryption
-2. Windows/OSx support
+2. Windows support
 3. IPv6
-4. Much more
-5. IP Load Balancing
-6. HTTP Load Balancing
-7. DNS Service Discovery
-8. Additional peer discovery plugins
+4. IP Load Balancing
+5. HTTP Load Balancing
+6. DNS Service Discovery
+7. Additional peer discovery plugins
 
 ## Quick Start
 
