@@ -81,12 +81,11 @@ func (s *State) GoodPeers() []string {
 func (s *State) AddGoodPeer(peer string) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+
 	s.goodPeers = append(s.goodPeers, peer)
-	go func() {
-		if err := s.Save(); err != nil {
-			log.Error("state save err: %s", err)
-		}
-	}()
+	if err := s.write(); err != nil {
+		log.Error("state save err: %s", err)
+	}
 }
 
 func (s *State) Load() error {
@@ -106,6 +105,10 @@ func (s *State) Save() error {
 	log.Debug("state saving")
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+	return s.write()
+}
+
+func (s *State) write() error {
 	data, err := json.Marshal(s)
 	if err != nil {
 		log.Error("%s", err)

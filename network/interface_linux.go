@@ -53,7 +53,7 @@ func newTUN() (ifce *Interface, err error) {
 func createInterface(fd uintptr, flags uint16) (createdIFName string, err error) {
 	var req ifReq
 	req.Flags = flags
-//	copy(req.Name[:], ifName)
+	//	copy(req.Name[:], ifName)
 	_, _, errno := syscall.Syscall(syscall.SYS_IOCTL, fd, uintptr(syscall.TUNSETIFF), uintptr(unsafe.Pointer(&req)))
 	if errno != 0 {
 		err = errno

@@ -4,11 +4,11 @@ package network
 
 import (
 	"fmt"
+	"log"
+	"net"
 	"os"
 	"os/exec"
 	"strconv"
-	"log"
-	"net"
 )
 
 func newTAP() (iface *Interface, err error) {

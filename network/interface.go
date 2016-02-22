@@ -8,15 +8,13 @@ import (
 
 const DEFAULT_MTU = 1400
 
-
 type Interface struct {
 	isTAP bool
 	name  string
 	file  *os.File
 }
-type Ethertype [2] byte
+type Ethertype [2]byte
 type Tagging int
-
 
 const (
 	NotTagged    Tagging = 0
@@ -25,8 +23,9 @@ const (
 )
 
 var (
-	IPv4                = Ethertype{0x08, 0x00}
+	IPv4 = Ethertype{0x08, 0x00}
 )
+
 func (i Interface) Name() string {
 	return i.name
 }
@@ -39,7 +38,7 @@ func (i *Interface) Read(data []byte) (n int, err error) {
 	return i.file.Read(data)
 }
 
-func(i *Interface) IsTAP()bool{
+func (i *Interface) IsTAP() bool {
 	return i.isTAP
 }
 
